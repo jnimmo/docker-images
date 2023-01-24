@@ -1,0 +1,23 @@
+name: Build and publish Iris Docker image
+
+on:
+  release:
+    types: [published]
+    repos: dfir-iris/iris-web
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: |
+        docker build -t dfir-iris/iris-web:${{ env.TAG_NAME }} .
+
+    - name: Publish Docker Image
+      run: |
+        echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+        docker push dfir-iris/iris-web:${{ env.TAG_NAME }}
