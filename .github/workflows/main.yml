@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: 'recursive'
-        repository: https://github.com/dfir-iris/iris-web.git
+        repository: dfir-iris/iris-web
         ref: $(git describe --abbrev=0 --tags)
         path: .
 
