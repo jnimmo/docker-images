@@ -8,12 +8,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get Latest Release Tag
+      id: latest-tag
+      run: |
+        TAG_NAME=$(curl -s "https://api.github.com/repos/<github_username>/<repository_name>/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        echo "::set-output name=tag_name::$TAG_NAME"
+
     - name: Checkout code
       uses: actions/checkout@v2
       with:
         submodules: 'recursive'
         repository: dfir-iris/iris-web
-        ref: ${{ 'refs/tags/' + `git describe --abbrev=0 --tags` }}
+        ref: ${{ steps.latest-tag.outputs.tag_name }}
         path: .
 
     - name: Build Docker Image
@@ -28,4 +34,4 @@ jobs:
         
     - name: Publish Docker Image
       run: |
-        docker push jnimmo/dfir-iris:webapp-$(git describe --abbrev=0 --tags)
+        docker push jnimmo/dfir-iris:webapp-${{ steps.latest-tag.outputs.tag_name }}
