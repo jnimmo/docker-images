@@ -11,7 +11,7 @@ jobs:
     - name: Get Latest Release Tag
       id: latest-tag
       run: |
-        TAG_NAME=$(curl -s "https://api.github.com/repos/<github_username>/<repository_name>/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        TAG_NAME=$(curl -s "https://api.github.com/repos/dfir-iris/iris-web/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
 
     - name: Checkout code
