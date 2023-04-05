@@ -21,9 +21,6 @@ jobs:
         repository: dfir-iris/iris-web
         ref: ${{ steps.latest-tag.outputs.tag_name }}
         path: iris-web
-        
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -40,4 +37,6 @@ jobs:
         context: "{{defaultContext}}:iris-web"
         file: iris-web/docker/webApp/Dockerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:${{ steps.latest-tag.outputs.tag_name }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:latest
