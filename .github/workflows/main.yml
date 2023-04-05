@@ -17,9 +17,8 @@ jobs:
     - name: Run shell commands
       run: |
         git config --global url.https://github.com/.insteadOf git://github.com/
-        git clone https://github.com/dfir-iris/iris-web.git
+        git clone --branch v2.0.0 https://github.com/dfir-iris/iris-web.git
         cd iris-web
-        git checkout v2.0.0
         cp .env.model .env
         docker build -t dfir-iris/iris-web:2.0.0 .
 
