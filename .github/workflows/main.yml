@@ -23,6 +23,7 @@ jobs:
 
     - name: Build Docker Image
       run: |
+        cd iris-web
         cp .env.model .env
         docker build -t dfir-iris/iris-web:v2.0.0
 
