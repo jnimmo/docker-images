@@ -20,9 +20,9 @@ jobs:
         git clone --branch v2.0.0 https://github.com/dfir-iris/iris-web.git
         cd iris-web
         cp .env.model .env
-        TAG=dfir-iris/iris-web:2.0.0 docker-compose build app
+        docker-compose build app
 
     - name: Publish Docker Image
       run: |
         echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-        docker push dfir-iris/iris-web:2.0.0
+        docker push iriswebapp_app
