@@ -15,7 +15,7 @@ jobs:
         echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
       
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'recursive'
         repository: dfir-iris/iris-web
@@ -34,7 +34,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
-        context: "{{defaultContext}}:iris-web"
+        context: "./iris-web"
         file: iris-web/docker/webApp/Dockerfile
         push: true
         tags: |
