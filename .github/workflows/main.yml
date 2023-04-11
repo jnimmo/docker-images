@@ -2,6 +2,8 @@ name: Build and publish Iris Docker image
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'  # Run daily at midnight
 
 jobs:
   build-and-publish:
