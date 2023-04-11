@@ -57,6 +57,8 @@ jobs:
           ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:${{ steps.latest-tag.outputs.tag_name }}
           ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:latest
         labels: "org.label-schema.ci-build-url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
           
     - name: Save tag to cache
       if: steps.check-cache.outputs.cache-hit != 'true'
