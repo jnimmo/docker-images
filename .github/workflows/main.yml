@@ -10,35 +10,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cache Latest Release Tag
-      id: cache-tag
+    - name: Get Latest Release Tag
+      id: latest-tag
+      uses: actions/github-script@v4
+      with:
+        script: |
+          const { data } = await github.repos.getLatestRelease({
+            owner: 'dfir-iris',
+            repo: 'iris-web'
+          });
+          console.log(`Latest Release Tag: ${data.tag_name}`);
+          return data.tag_name
+
+    - name: Check if latest tag has already been built
+      id: check-cache
       uses: actions/cache@v2
       with:
         path: cache/tag
-        key: latest-release-tag
-        restore-keys: |
-          latest-release-tag
+        key: ${{ steps.latest-tag.outputs.result }}
+      if: steps.latest-tag.outputs.result != ''
           
-    - name: Get Latest Release Tag
-      if: steps.cache-tag.outputs.cache-hit != 'true'
-      id: latest-tag
+    - name: Exit if latest tag has already been built
       run: |
-        TAG_NAME=$(curl -s "https://api.github.com/repos/dfir-iris/iris-web/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-        echo "Latest tag: $TAG_NAME"
-        if [ -n "$TAG_NAME" ]; then
-          echo "$TAG_NAME" > cache/tag/latest-release-tag
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-        else
-          echo "No new release found."
-          exit 1
+        if [ "${{ steps.check-cache.outputs.cache-hit }}" = "true" ]; then
+          echo "Latest release has already been built. Skipping build."
+          exit 0
         fi
+      if: steps.check-cache.outputs.cache-hit == 'true'
       
     - name: Checkout code
       uses: actions/checkout@v3
       with:
         submodules: 'recursive'
         repository: dfir-iris/iris-web
-        ref: ${{ steps.latest-tag.outputs.tag_name }}
+        ref: ${{ steps.latest-tag.outputs.result }}
         path: iris-web
 
     - name: Set up Docker Buildx
@@ -57,5 +62,13 @@ jobs:
         file: iris-web/docker/webApp/Dockerfile
         push: true
         tags: |
-          ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:${{ steps.latest-tag.outputs.tag_name }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:${{ steps.latest-tag.outputs.result }}
           ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:latest
+          
+    - name: Save tag to cache
+      uses: actions/cache@v2
+      with:
+        path: cache/tag
+        key: ${{ steps.latest-tag.outputs.result }}
+        restore-keys: |
+          cache/tag
