@@ -60,7 +60,7 @@ jobs:
           ${{ secrets.DOCKER_HUB_USERNAME }}/dfir-iris-web:latest
           
     - name: Save tag to cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: cache/tag
         key: ${{ steps.latest-tag.outputs.tag_name }}
