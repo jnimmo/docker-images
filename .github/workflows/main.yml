@@ -8,11 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Cache Latest Release Tag
+      id: cache-tag
+      uses: actions/cache@v2
+      with:
+        path: cache/tag
+        key: latest-release-tag
+        restore-keys: |
+          latest-release-tag
+          
     - name: Get Latest Release Tag
+      if: steps.cache-tag.outputs.cache-hit != 'true'
       id: latest-tag
       run: |
         TAG_NAME=$(curl -s "https://api.github.com/repos/dfir-iris/iris-web/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+        echo "Latest tag: $TAG_NAME"
+        if [ -n "$TAG_NAME" ]; then
+          echo "$TAG_NAME" > cache/tag/latest-release-tag
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+        else
+          echo "No new release found."
+          exit 1
+        fi
       
     - name: Checkout code
       uses: actions/checkout@v3
