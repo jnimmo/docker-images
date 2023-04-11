@@ -43,7 +43,7 @@ jobs:
       with:
         submodules: recursive
         repository: dfir-iris/iris-web
-        ref: ${{ steps.latest-tag.outputs.result }}
+        ref: "${{ steps.latest-tag.outputs.result }}"
         path: iris-web
 
     - name: Set up Docker Buildx
