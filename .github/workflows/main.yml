@@ -20,7 +20,7 @@ jobs:
             repo: 'iris-web'
           });
           console.log(`Latest Release Tag: ${data.tag_name}`);
-          return data.tag_name
+          return data.tag_name.replace(/^"(.*)"$/, '$1')
 
     - name: Check if latest tag has already been built
       id: check-cache
